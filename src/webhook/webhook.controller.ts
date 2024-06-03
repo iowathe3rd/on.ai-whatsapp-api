@@ -1,12 +1,27 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { WebhookObject } from 'src/types';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { WebhookService } from './webhook.service';
 
 @Controller('webhook')
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
   @Post()
-  handleWebhook(@Body() body: WebhookObject) {
-    return this.webhookService.proceed(body);
+  @HttpCode(HttpStatus.OK)
+  async handleWebhook(@Body() requestBody: any) {
+    return this.webhookService.handleWebhook(requestBody);
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async verifyWebhook(@Req() req: Request) {
+    return this.webhookService.verifyWebhook(req);
   }
 }

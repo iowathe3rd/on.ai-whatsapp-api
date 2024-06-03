@@ -42,6 +42,7 @@ enum Direction {
 
 model Message {
   id        String      @id @default(uuid())
+  wa_id     String      @unique
   from      String? // Отправитель (это может быть идентификатор клиента или номер телефона)
   timeStamp DateTime
   type      MessageType
@@ -78,6 +79,7 @@ model Chat {
 
 model Contact {
   id          String  @id @default(uuid())
+  wa_id       Status  @unique
   firstName   String? // Имя контакта
   lastName    String? // Фамилия контакта
   phoneNumber String? // Номер телефона контакта
