@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import prisma from 'src/lib/db';
-import { WebhookObject } from 'src/types';
+import {MessagesObject, WebhookObject} from 'src/types';
+import {Contact, Direction, MessageType, Status} from "@prisma/client";
+import {WebhookTypesEnum} from "../types/enums";
+import {timestamp} from "rxjs";
 
 @Injectable()
 export class WebhookService {
@@ -11,30 +14,73 @@ export class WebhookService {
           const { contacts, messages } = change.value;
 
           for (const contact of contacts) {
-            const candidate = await prisma.contact.create({
-              data: {
-                wa_id: contact.wa_id,
-                firstName: contact.profile.name,
-              },
-            });
+            try {
+              await prisma.contact.upsert({
+                where: { phoneNumber: contact.wa_id }, // Using phoneNumber as unique identifier
+                update: {
+                  name: contact.profile.name,
+                  updatedAt: new Date(), // Ensure updatedAt is set on update
+                },
+                create: {
+                  name: contact.profile.name,
+                  phoneNumber: contact.wa_id, // Assuming wa_id is a phone number
+                },
+              });
+            } catch (error) {
+              console.error('Error processing contact:', error);
+              // Additional error handling, e.g., logging or notifications
+            }
+          }
+
+          for (const contact of contacts) {
+            try {
+              await prisma.contact.upsert({
+                where: { phoneNumber: contact.wa_id }, // Using phoneNumber as unique identifier
+                update: {
+                  name: contact.profile.name,
+                  updatedAt: new Date(), // Ensure updatedAt is set on update
+                },
+                create: {
+                  name: contact.profile.name,
+                  phoneNumber: contact.wa_id, // Assuming wa_id is a phone number
+                },
+              });
+            } catch (error) {
+              console.error('Error processing contact:', error);
+              // Additional error handling, e.g., logging or notifications
+            }
           }
 
           for (const message of messages) {
-            await prisma.message.create({
-              data: {
-                from: message.from,
-                timeStamp: new Date(Number(message.timestamp) * 1000),
-                type: message.type,
-                content: message,
-                chatId: chatId,
-                direction: 'Client', // Assuming all incoming messages are from the client
-                status: 'Sent', // Initial status
-              },
-            });
-
-            if (message.type === 'image') {
-              // Handle image download if needed
-              await downloadMedia(message);
+            try {
+              await prisma.message.create({
+                data: {
+                  wa_id: message.id,
+                  timeStamp: new Date(Number(message.timestamp) * 1000),// Convert to ISO-8601 format
+                  type: message.type.toUpperCase() as MessageType,
+                  content: message[message.type],
+                  direction: Direction.Inbound,
+                  contact: {
+                    connectOrCreate: {
+                      where: {
+                        phoneNumber: message.from,
+                      },
+                      create: {
+                        name: contacts.find(contact => contact.wa_id === message.from)?.profile.name || '',
+                        phoneNumber: message.from,
+                      }
+                    },
+                  },
+                  context: {
+                    create: {
+                      status: Status.Sent,
+                    }
+                  }
+                },
+              });
+            } catch (error) {
+              console.error('Error processing message:', error);
+              // Additional error handling, e.g., logging or notifications
             }
           }
         }
@@ -59,4 +105,8 @@ export class WebhookService {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
     }
   }
+
+   getMessageContent = (message: MessagesObject) => {
+    return message[message.type]
+  };
 }

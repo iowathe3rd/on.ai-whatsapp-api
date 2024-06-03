@@ -36,53 +36,44 @@ enum Status {
 }
 
 enum Direction {
-  Client // Сообщение отправлено клиентом
-  Me // Сообщение отправлено мной (оператором)
+  Inbound // Сообщение отправлено клиентом
+  Outbound // Сообщение отправлено мной (оператором)
 }
 
 model Message {
   id        String      @id @default(uuid())
   wa_id     String      @unique
-  from      String? // Отправитель (это может быть идентификатор клиента или номер телефона)
   timeStamp DateTime
   type      MessageType
-  content   Json
-  chat      Chat        @relation(fields: [chatId], references: [id])
-  chatId    String
 
-  direction Direction // Направление сообщения (Client или Me)
+  content Json
 
-  status Status // Статус сообщения (Sent, Delivered, Read)
-  readAt DateTime? // Время, когда сообщение было прочитано
+  direction Direction // Направление сообщения (Inbound или Outbound)
 
   context          MessageContext? @relation(fields: [messageContextId], references: [id])
   messageContextId String?
+
+  contact   Contact? @relation(fields: [contactId], references: [id])
+  contactId String?
 }
 
 model MessageContext {
-  id                   String    @id @default(uuid())
-  forwarder            Boolean
-  frequently_forwarded Boolean
-  // Added to Webhooks if message is an inbound reply to a sent message.
-  // The WhatsApp ID of the sender of the sent message
-  from                 String
-  messageId            String // The message ID for the sent message for an inbound reply.
-  Message              Message[]
-}
-
-model Chat {
   id        String    @id @default(uuid())
-  messages  Message[]
-  contact   Contact   @relation(fields: [contactId], references: [id])
-  contactId String    @unique
+  readAt    DateTime? // Время, когда сообщение было прочитано
+  forwarder Boolean?
+  status    Status?   @default(Sent) // Статус сообщения (Sent, Delivered, Read)
+  isDeleted Boolean?  @default(false)
+  isEdited  Boolean?  @default(false)
+
+  messageId String? // The message ID for the sent message for an inbound reply.
+  Message   Message[]
 }
 
 model Contact {
-  id          String  @id @default(uuid())
-  wa_id       Status  @unique
-  firstName   String? // Имя контакта
-  lastName    String? // Фамилия контакта
-  phoneNumber String? // Номер телефона контакта
-  avatar      String? // Аватарка контакта
-  chat        Chat? // Связь с чатом
+  id          String    @id @default(uuid())
+  name        String
+  phoneNumber String?   @unique // Номер телефона контакта
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
