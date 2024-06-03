@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  INTERACTIVE
+  DOCUMENT
+  AUDIO
+  STICKER
+  ORDER
+  VIDEO
+  BUTTON
+  CONTACTS
+  LOCATION
+  UNKNOWN
+  SYSTEM
+}
+
+enum Status {
+  Sent // Сообщение отправлено
+  Delivered // Сообщение доставлено
+  Read // Сообщение прочитано
+}
+
+enum Direction {
+  Client // Сообщение отправлено клиентом
+  Me // Сообщение отправлено мной (оператором)
+}
+
+model Message {
+  id        String      @id @default(uuid())
+  from      String? // Отправитель (это может быть идентификатор клиента или номер телефона)
+  timeStamp DateTime
+  type      MessageType
+  content   Json
+  chat      Chat        @relation(fields: [chatId], references: [id])
+  chatId    String
+
+  direction Direction // Направление сообщения (Client или Me)
+
+  status Status // Статус сообщения (Sent, Delivered, Read)
+  readAt DateTime? // Время, когда сообщение было прочитано
+
+  context          MessageContext? @relation(fields: [messageContextId], references: [id])
+  messageContextId String?
+}
+
+model MessageContext {
+  id                   String    @id @default(uuid())
+  forwarder            Boolean
+  frequently_forwarded Boolean
+  // Added to Webhooks if message is an inbound reply to a sent message.
+  // The WhatsApp ID of the sender of the sent message
+  from                 String
+  messageId            String // The message ID for the sent message for an inbound reply.
+  Message              Message[]
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  messages  Message[]
+  contact   Contact   @relation(fields: [contactId], references: [id])
+  contactId String    @unique
+}
+
+model Contact {
+  id          String  @id @default(uuid())
+  firstName   String? // Имя контакта
+  lastName    String? // Фамилия контакта
+  phoneNumber String? // Номер телефона контакта
+  avatar      String? // Аватарка контакта
+  chat        Chat? // Связь с чатом
+}
