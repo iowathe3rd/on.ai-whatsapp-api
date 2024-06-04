@@ -32,7 +32,6 @@ export declare class RequesterClass {
     apiVersion: string,
     phoneNumberId: number,
     accessToken: string,
-    businessAcctId: string,
   );
   sendCAPIRequest: (
     method: HttpMethodsEnum,

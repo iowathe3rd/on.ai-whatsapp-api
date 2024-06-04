@@ -11,7 +11,6 @@ export default class Requester implements RequesterClass {
   client: Readonly<HttpsClient>;
   accessToken: Readonly<string>;
   phoneNumberId: Readonly<number>;
-  businessAcctId: Readonly<string>;
   apiVersion: Readonly<string>;
   host: Readonly<string>;
   protocol: Readonly<string> = 'https:';
@@ -22,14 +21,12 @@ export default class Requester implements RequesterClass {
     apiVersion: string,
     phoneNumberId: number,
     accessToken: string,
-    businessAcctId: string,
   ) {
     this.client = new HttpsClient();
     this.host = host;
     this.apiVersion = apiVersion;
     this.phoneNumberId = phoneNumberId;
     this.accessToken = accessToken;
-    this.businessAcctId = businessAcctId;
   }
 
   buildHeader(contentType: string): GeneralHeaderInterface {

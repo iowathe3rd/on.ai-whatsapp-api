@@ -28,7 +28,6 @@ export default class WhatsApp implements WhatsAppClass {
       this.config[SDKEnums.WAConfigEnum.APIVersion],
       this.config[SDKEnums.WAConfigEnum.PhoneNumberId],
       this.config[SDKEnums.WAConfigEnum.AccessToken],
-      this.config[SDKEnums.WAConfigEnum.BusinessAcctId],
     );
 
     this.messages = new MessagesAPI(this.config, this.requester);
