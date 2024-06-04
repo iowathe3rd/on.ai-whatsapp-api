@@ -2,9 +2,15 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import prisma from 'src/lib/db';
 import { MessagesObject, WebhookObject } from 'src/types';
 import { Contact, Direction, MessageType, Status } from '@prisma/client';
+import WhatsApp from 'src/classes/Whatsapp';
 
 @Injectable()
 export class WebhookService {
+  private readonly waba: WhatsApp;
+  constructor() {
+    this.waba = new WhatsApp(parseInt(process.env.WA_PHONE_NUMBER_ID));
+  }
+
   async handleWebhook(dto: WebhookObject): Promise<void> {
     // Деструктуризация объекта webhook
     const { entry } = dto;
@@ -29,6 +35,12 @@ export class WebhookService {
 
             // Создаем новое сообщение в базе данных
             await this.createMessage(message, senderData.id);
+            await this.waba.messages.text(
+              {
+                body: 'HI!',
+              },
+              parseInt(senderData.phoneNumber),
+            );
           }
         }
       }
@@ -93,12 +105,12 @@ export class WebhookService {
       data: {
         content: messageContent,
         type: message.type.toUpperCase() as MessageType,
-        direction: Direction.Inbound,
+        direction: Direction.inbound,
         timeStamp: new Date(),
         wa_id: message.id,
         context: {
           create: {
-            status: Status.Sent,
+            status: Status.sent,
           },
         },
         contact: {
