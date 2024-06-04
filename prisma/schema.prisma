@@ -14,30 +14,30 @@ datasource db {
 }
 
 enum MessageType {
-  TEXT
-  IMAGE
-  INTERACTIVE
-  DOCUMENT
-  AUDIO
-  STICKER
-  ORDER
-  VIDEO
-  BUTTON
-  CONTACTS
-  LOCATION
-  UNKNOWN
-  SYSTEM
+  text
+  image
+  interactive
+  document
+  audio
+  sticker
+  order
+  video
+  button
+  contacts
+  location
+  unknown
+  system
 }
 
 enum Status {
-  Sent // Сообщение отправлено
-  Delivered // Сообщение доставлено
-  Read // Сообщение прочитано
+  sent // Сообщение отправлено
+  delivered // Сообщение доставлено
+  read // Сообщение прочитано
 }
 
 enum Direction {
-  Inbound // Сообщение отправлено клиентом
-  Outbound // Сообщение отправлено мной (оператором)
+  inbound // Сообщение отправлено клиентом
+  outbound // Сообщение отправлено мной (оператором)
 }
 
 model Message {
@@ -61,7 +61,7 @@ model MessageContext {
   id        String    @id @default(uuid())
   readAt    DateTime? // Время, когда сообщение было прочитано
   forwarder Boolean?
-  status    Status?   @default(Sent) // Статус сообщения (Sent, Delivered, Read)
+  status    Status?   @default(sent) // Статус сообщения (Sent, Delivered, Read)
   isDeleted Boolean?  @default(false)
   isEdited  Boolean?  @default(false)
 
@@ -72,7 +72,7 @@ model MessageContext {
 model Contact {
   id          String    @id @default(uuid())
   name        String
-  phoneNumber String?   @unique // Номер телефона контакта
+  phoneNumber Int       @unique // Номер телефона контакта
   messages    Message[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

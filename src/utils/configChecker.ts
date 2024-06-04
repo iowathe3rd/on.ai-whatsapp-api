@@ -1,10 +1,9 @@
+import { PinoLogger } from 'nestjs-pino';
 import { WARequiredConfigEnum } from 'src/types/enums';
-import Logger from 'src/utils/logger';
 
-const LIB_NAME = 'CONFIG CHECKER';
-const LOG_LOCAL = false;
-
-const LOGGER = new Logger(LIB_NAME, process.env.DEBUG === 'true' || LOG_LOCAL);
+const LOGGER = new PinoLogger({
+  renameContext: 'CONFIG CHECKER',
+});
 
 export const configChecker = (senderNumberId?: number) => {
   if (
@@ -12,19 +11,19 @@ export const configChecker = (senderNumberId?: number) => {
       process.env.WA_PHONE_NUMBER_ID === '') &&
     senderNumberId == undefined
   ) {
-    LOGGER.log(
+    LOGGER.info(
       `Environmental variable: WA_PHONE_NUMBER_ID and/or sender phone number id arguement is undefined.`,
     );
     throw new Error('Missing WhatsApp sender phone number Id.');
   }
 
   for (const value of Object.values(WARequiredConfigEnum)) {
-    LOGGER.log(value + ' ---- ' + process.env[`${value}`]);
+    LOGGER.info(value + ' ---- ' + process.env[`${value}`]);
     if (
       process.env[`${value}`] === undefined ||
       process.env[`${value}`] === ''
     ) {
-      LOGGER.log(`Environmental variable: ${value} is undefined`);
+      LOGGER.info(`Environmental variable: ${value} is undefined`);
       throw new Error('Invalid configuration.');
     }
   }

@@ -8,6 +8,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
+import { Request } from 'express';
 
 @Controller('webhook')
 export class WebhookController {

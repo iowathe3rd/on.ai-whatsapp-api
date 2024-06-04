@@ -8,12 +8,12 @@ import {
   ResponseHeaders,
   ResponseJSONBody,
 } from 'src/types/httpsClient';
-import Logger from 'src/utils/logger';
 import { HttpMethodsEnum } from 'src/types/enums';
+import { PinoLogger } from 'nestjs-pino';
 
-const LIB_NAME = 'HttpsClient';
-const LOG_LOCAL = false;
-const LOGGER = new Logger(LIB_NAME, process.env.DEBUG === 'true' || LOG_LOCAL);
+const LOGGER = new PinoLogger({
+  renameContext: 'HTTPS CLIENT',
+});
 
 export default class HttpsClient implements HttpsClientClass {
   agent: Agent;
@@ -48,7 +48,7 @@ export default class HttpsClient implements HttpsClientClass {
         headers: headers,
       });
 
-      LOGGER.log({
+      LOGGER.info({
         hostname: hostname,
         port: port,
         path,
@@ -73,7 +73,7 @@ export default class HttpsClient implements HttpsClientClass {
       req.once('socket', (socket) => {
         if (socket.connecting) {
           socket.once('secureConnect', () => {
-            LOGGER.log(requestData);
+            LOGGER.info(requestData);
             if (
               method === HttpMethodsEnum.Post ||
               method == HttpMethodsEnum.Put

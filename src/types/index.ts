@@ -3,6 +3,7 @@ import {
   CurrencyCodesEnum,
   DocumentMediaTypesEnum,
   ImageMediaTypesEnum,
+  MessageTypesEnum,
   ReferralSourceTypesEnum,
   StatusEnum,
   StickerMediaTypesEnum,
@@ -177,7 +178,7 @@ export type MessagesObject = {
   system?: SystemObject;
   text?: TextObject;
   timestamp: string;
-  type: WebhookTypesEnum;
+  type: MessageTypesEnum;
   video?: VideoObject;
 };
 

@@ -1,16 +1,12 @@
 import { WAConfigType } from 'src/types/config';
 import { WhatsAppClass } from 'src/types/WhatsApp';
 import * as SDKEnums from 'src/types/enums';
-import Logger from 'src/utils/logger';
 import Requester from 'src/utils/requester';
 import MessagesAPI from './messages';
 import PhoneNumbersAPI from './phoneNumbers';
 import TwoStepVerificationAPI from './twoStepVerification';
 import { importConfig } from 'src/utils/importConfig';
-
-const LIB_NAME = 'WHATSAPP';
-const LOG_LOCAL = false;
-const LOGGER = new Logger(LIB_NAME, process.env.DEBUG === 'true' || LOG_LOCAL);
+import { Logger, PinoLogger } from 'nestjs-pino';
 
 export default class WhatsApp implements WhatsAppClass {
   config: WAConfigType;
@@ -21,6 +17,9 @@ export default class WhatsApp implements WhatsAppClass {
   readonly twoStepVerification: TwoStepVerificationAPI;
   static readonly Enums = SDKEnums;
 
+  private readonly LOGGER = new PinoLogger({
+    renameContext: 'WABA API CLIENT',
+  });
   constructor(senderNumberId?: number) {
     this.config = importConfig(senderNumberId);
     this.requester = new Requester(
@@ -37,6 +36,6 @@ export default class WhatsApp implements WhatsAppClass {
       this.requester,
     );
 
-    LOGGER.log('WHATSAPP API CLIENT INITIALIZED');
+    this.LOGGER.info('WHATSAPP API CLIENT INITIALIZED');
   }
 }

@@ -2,11 +2,11 @@ import { RequesterResponseInterface } from '../types/requester';
 import BaseAPI from './base';
 import { HttpMethodsEnum, WAConfigEnum } from '../types/enums';
 import * as tsv from 'src/types/twoStepVerification';
-import Logger from 'src/utils/logger';
+import { PinoLogger } from 'nestjs-pino';
 
-const LIB_NAME = 'TWOSTEPVERIFICATION_API';
-const LOG_LOCAL = false;
-const LOGGER = new Logger(LIB_NAME, process.env.DEBUG === 'true' || LOG_LOCAL);
+const LOGGER = new PinoLogger({
+  renameContext: 'WABA API CLIENT',
+});
 
 export default class TwoStepVerificationAPI
   extends BaseAPI
@@ -19,7 +19,7 @@ export default class TwoStepVerificationAPI
     pin: number,
   ): Promise<RequesterResponseInterface<tsv.SetPinResponseObject>> {
     const body: tsv.TwoStepVerificationObject = { pin: pin.toString() };
-    LOGGER.log(
+    LOGGER.info(
       `Setting two-step verification pin for phone number Id ${
         this.config[WAConfigEnum.PhoneNumberId]
       }`,

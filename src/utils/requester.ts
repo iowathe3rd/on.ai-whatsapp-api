@@ -1,11 +1,11 @@
-import Logger from './logger';
+import { PinoLogger } from 'nestjs-pino';
 import HttpsClient from './httpsClient';
 import { HttpMethodsEnum } from 'src/types/enums';
 import { RequesterClass, GeneralHeaderInterface } from 'src/types/requester';
 
-const LIB_NAME = 'REQUESTER';
-const LOG_LOCAL = false;
-const LOGGER = new Logger(LIB_NAME, process.env.DEBUG === 'true' || LOG_LOCAL);
+const LOGGER = new PinoLogger({
+  renameContext: 'REQUESTER',
+});
 
 export default class Requester implements RequesterClass {
   client: Readonly<HttpsClient>;
@@ -49,7 +49,7 @@ export default class Requester implements RequesterClass {
   ) {
     const contentType = 'application/json';
 
-    LOGGER.log(
+    LOGGER.info(
       `${method} : ${this.protocol.toLowerCase()}//${this.host}:${
         this.port
       }/${this.buildCAPIPath(endpoint)}`,
