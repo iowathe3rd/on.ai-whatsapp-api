@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import axios, { AxiosResponse } from 'axios';
 import { ClientOptions, Client, InvalidBucketNameError } from 'minio';
 import { MessagesObject } from 'src/types';
 
@@ -7,17 +8,27 @@ export class MediaService {
   private readonly logger = new Logger(MediaService.name);
   private minioClient: Client;
   private readonly bucketName: string;
+  private readonly whatsappApiUrl: string;
+  private readonly whatsappAccessToken: string;
 
   constructor() {
-    const { MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_ENDPOINT, MINIO_BUCKET } =
-      process.env;
+    const {
+      MINIO_ACCESS_KEY,
+      MINIO_SECRET_KEY,
+      MINIO_ENDPOINT,
+      MINIO_BUCKET,
+      WHATSAPP_API_URL,
+      WHATSAPP_ACCESS_TOKEN,
+    } = process.env;
 
     // Проверка наличия необходимых переменных окружения
     if (
       !MINIO_ACCESS_KEY ||
       !MINIO_SECRET_KEY ||
       !MINIO_ENDPOINT ||
-      !MINIO_BUCKET
+      !MINIO_BUCKET ||
+      !WHATSAPP_API_URL ||
+      !WHATSAPP_ACCESS_TOKEN
     ) {
       throw new Error(
         'Minio access key, secret key, endpoint, and bucket are required',
@@ -33,6 +44,8 @@ export class MediaService {
     // Создание клиента Minio
     this.minioClient = new Client(minioOptions);
     this.bucketName = MINIO_BUCKET;
+    this.whatsappApiUrl = WHATSAPP_API_URL;
+    this.whatsappAccessToken = WHATSAPP_ACCESS_TOKEN;
 
     // Проверка наличия бакета
     this.ensureBucketExists(MINIO_BUCKET);
@@ -100,10 +113,28 @@ export class MediaService {
     }
   }
 
-  private async downloadMediaFromWhatsApp(sha256: string): Promise<Buffer> {
-    // Логика загрузки медиа файла из WhatsApp
-    // ...
-    return Buffer.from([]);
+  private async downloadMediaFromWhatsApp(id: string): Promise<Buffer> {
+    try {
+      const mediaUrl = `${this.whatsappApiUrl}/${id}`;
+      const response: AxiosResponse<Buffer> = await axios.get(mediaUrl, {
+        headers: {
+          Authorization: `Bearer ${this.whatsappAccessToken}`,
+        },
+        responseType: 'arraybuffer',
+      });
+
+      if (response.status === 200) {
+        const mediaBuffer = response.data;
+        return mediaBuffer;
+      } else {
+        throw new Error(`Failed to download media: ${response.status}`);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error downloading media from WhatsApp: ${error.message}`,
+      );
+      throw error;
+    }
   }
 
   private async saveMediaMetadataToDatabase(
