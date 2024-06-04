@@ -1,36 +1,40 @@
+import { ServerResponse } from 'http';
+import { IncomingHttpHeaders } from 'http';
+import { WAConfigType } from './config';
 import {
   ConversationTypesEnum,
   CurrencyCodesEnum,
-  DocumentMediaTypesEnum,
-  ImageMediaTypesEnum,
-  ReferralSourceTypesEnum,
   StatusEnum,
-  StickerMediaTypesEnum,
-  SystemChangeTypesEnum,
   VideoMediaTypesEnum,
+  ReferralSourceTypesEnum,
+  StickerMediaTypesEnum,
   WebhookTypesEnum,
+  SystemChangeTypesEnum,
+  ImageMediaTypesEnum,
+  DocumentMediaTypesEnum,
 } from './enums';
+import { BaseClass } from './base';
 
-export type PricingObject = {
+type PricingObject = {
   category: ConversationTypesEnum;
   pricing_model: 'CBP';
 };
 
-export type OriginObject = {
+type OriginObject = {
   type: ConversationTypesEnum;
 };
 
-export type ConversationObject = {
+type ConversationObject = {
   id: string;
   origin: OriginObject;
   expiration_timestamp: string;
 };
 
-export type ErrorDataObject = {
+type ErrorDataObject = {
   details: string;
 };
 
-export type ErrorObject = {
+type ErrorObject = {
   code: number;
   title: string;
   message: string;
@@ -47,17 +51,17 @@ export type StatusesObject = {
   timestamp: string;
 };
 
-export type AudioObject = {
+type AudioObject = {
   id: string;
   mime_type: string;
 };
 
-export type ButtonObject = {
+type ButtonObject = {
   payload: string;
   text: string;
 };
 
-export type ConTextObject = {
+type ConTextObject = {
   forwarded: boolean;
   frequently_forwarded: boolean;
   from: string;
@@ -68,7 +72,7 @@ export type ConTextObject = {
   };
 };
 
-export type DocumentObject = {
+type DocumentObject = {
   caption: string;
   filename: string;
   sha256: string;
@@ -76,27 +80,27 @@ export type DocumentObject = {
   id: string;
 };
 
-export type IdentityObject = {
+type IdentityObject = {
   acknowledged: string;
   created_timestamp: string;
   hash: string;
 };
 
-export type ImageObject = {
+type ImageObject = {
   caption: string;
   sha256: string;
   id: string;
   mime_type: ImageMediaTypesEnum;
 };
 
-export type ButtonReplyObject = {
+type ButtonReplyObject = {
   button_reply: {
     id: string;
     title: string;
   };
 };
 
-export type ListReplyObject = {
+type ListReplyObject = {
   list_reply: {
     id: string;
     title: string;
@@ -104,43 +108,43 @@ export type ListReplyObject = {
   };
 };
 
-export type InteractiveObject = {
+type InteractiveObject = {
   type: ButtonReplyObject | ListReplyObject;
 };
 
-export type ProductItemsObject = {
+type ProductItemsObject = {
   product_retailer_id: string;
   quantity: string;
   item_price: string;
   currency: CurrencyCodesEnum;
 };
 
-export type Order_Object = {
+type Order_Object = {
   catalog_id: string;
   text: string;
   product_items: ProductItemsObject;
 };
 
-export type ReferralObject = {
-  source_url: string;
+type ReferralObject = {
+  source_url: URL;
   source_type: ReferralSourceTypesEnum;
   source_id: string;
   headline: string;
   body: string;
   media_type: ImageMediaTypesEnum | VideoMediaTypesEnum;
-  image_url: string;
-  video_url: string;
-  thumbnail_url: string;
+  image_url: URL;
+  video_url: URL;
+  thumbnail_url: URL;
 };
 
-export type StickerObject = {
+type StickerObject = {
   mime_type: StickerMediaTypesEnum;
   sha256: string;
   id: string;
   animated: boolean;
 };
 
-export type SystemObject = {
+type SystemObject = {
   body: string;
   identity: string;
   wa_id: string;
@@ -148,11 +152,11 @@ export type SystemObject = {
   customer: string;
 };
 
-export type TextObject = {
+type TextObject = {
   body: string;
 };
 
-export type VideoObject = {
+type VideoObject = {
   caption: string;
   filename: string;
   sha256: string;
@@ -181,16 +185,16 @@ export type MessagesObject = {
   video?: VideoObject;
 };
 
-export type ProfileObject = {
+type ProfileObject = {
   name: string;
 };
 
-export type ContactObject = {
+type ContactObject = {
   wa_id: string;
   profile: ProfileObject;
 };
 
-export type MetadataObject = {
+type MetadataObject = {
   display_phone_number: string;
   phoneNumberId: string;
 };
@@ -204,12 +208,12 @@ export type ValueObject = {
   statuses: StatusesObject[];
 };
 
-export type ChangesObject = {
+type ChangesObject = {
   field: string;
   value: ValueObject;
 };
 
-export type Entry_Object = {
+type Entry_Object = {
   id: string;
   changes: ChangesObject[];
 };
@@ -226,3 +230,18 @@ export type WebhookSubscribeQuery = {
     verify_token: string;
   };
 };
+
+export type WebhookCallback = (
+  statusCode: number,
+  headers: IncomingHttpHeaders,
+  body?: WebhookObject,
+  response?: ServerResponse,
+  error?: Error,
+) => any;
+
+export declare class WebhooksClass extends BaseClass {
+  constructor(config: WAConfigType, userAgent: string);
+  start(cb: WebhookCallback): boolean;
+  isStarted(): boolean;
+  stop(cb: (err?: Error) => any): boolean;
+}

@@ -1,7 +1,225 @@
+export const enum HttpMethodsEnum {
+  Get = 'GET',
+  Post = 'POST',
+  Put = 'PUT',
+  Delete = 'DELETE',
+}
+
+export const enum MessageTypesEnum {
+  Audio = 'audio', // for audio messages.
+  Contacts = 'contacts', // for contact messages.
+  Document = 'document', // for document messages.
+  Image = 'image', // for image messages.
+  Interactive = 'interactive', // for list and reply button messages.
+  Location = 'location', // for location messages.
+  Reaction = 'sticker', // for reaction messages.
+  Sticker = 'sticker', // for sticker messages.
+  Template = 'template', // for template messages. Text and media (images and documents) message templates are supported.
+  Text = 'text', // for text messages.
+  Video = 'video', // for video messages
+}
+
+export const enum ParametersTypesEnum {
+  Currency = 'currency',
+  DateTime = 'date_time',
+  Document = 'document',
+  Image = 'image',
+  Text = 'text',
+  Video = 'video',
+  Payload = 'payload',
+}
+
+export const enum InteractiveTypesEnum {
+  Button = 'button',
+  List = 'list',
+  Product = 'product',
+  ProductList = 'product_list',
+}
+
+export const enum ButtonTypesEnum {
+  QuickReply = 'quick_reply',
+  URL = 'url',
+}
+
+export const enum ButtonPositionEnum {
+  First,
+  Second,
+  Third,
+}
+
+export const enum ComponentTypesEnum {
+  Header = 'header',
+  Body = 'body',
+  Button = 'button',
+}
+
+export enum WAConfigEnum {
+  BaseURL = 'WA_BASE_URL',
+  AppId = 'M4D_APP_ID',
+  AppSecret = 'M4D_APP_SECRET',
+  PhoneNumberId = 'WA_PHONE_NUMBER_ID',
+  BusinessAcctId = 'WA_BUSINESS_ACCOUNT_ID',
+  APIVersion = 'CLOUD_API_VERSION',
+  AccessToken = 'CLOUD_API_ACCESS_TOKEN',
+  WebhookEndpoint = 'WEBHOOK_ENDPOINT',
+  WebhookVerificationToken = 'WEBHOOK_VERIFICATION_TOKEN',
+  ListenerPort = 'LISTENER_PORT',
+  MaxRetriesAfterWait = 'MAX_RETRIES_AFTER_WAIT',
+  RequestTimeout = 'REQUEST_TIMEOUT',
+  Debug = 'DEBUG',
+}
+
+export enum WARequiredConfigEnum {
+  APIVersion = 'CLOUD_API_VERSION',
+  AccessToken = 'CLOUD_API_ACCESS_TOKEN',
+}
+
 export const enum ConversationTypesEnum {
   BusinessInitiated = 'business_initiated',
   CustomerInitiated = 'customer_initiated',
   ReferralConversion = 'referral_conversion',
+}
+
+export const enum StatusEnum {
+  Delivered = 'delivered',
+  Read = 'read',
+  Sent = 'sent',
+}
+
+export const enum VideoMediaTypesEnum {
+  Mp4 = 'video/mp4',
+  Threegp = 'video/3gp',
+}
+
+export const enum StickerMediaTypesEnum {
+  Webp = 'image/webp',
+}
+
+export const enum ImageMediaTypesEnum {
+  Jpeg = 'image/jpeg',
+  Png = 'image/png',
+}
+
+export const enum DocumentMediaTypesEnum {
+  Text = 'text/plain',
+  Pdf = 'application/pdf',
+  Ppt = 'application/vnd.ms-powerpoint',
+  Word = 'application/msword',
+  Excel = 'application/vnd.ms-excel',
+  OpenDoc = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  OpenPres = 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  OpenSheet = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+}
+
+export const enum AudioMediaTypesEnum {
+  Aac = 'audio/aac',
+  Mp4 = 'audio/mp4',
+  Mpeg = 'audio/mpeg',
+  Amr = 'audio/amr',
+  Ogg = 'audio/ogg',
+}
+
+export const enum WebhookTypesEnum {
+  Audio = 'audio',
+  Button = 'button',
+  Document = 'document',
+  Text = 'text',
+  Image = 'image',
+  Interactive = 'interactive',
+  Order = 'order',
+  Sticker = 'sticker',
+  System = 'system',
+  Unknown = 'unknown',
+  Video = 'video',
+}
+
+export const enum SystemChangeTypesEnum {
+  CustomerChangedNumber = 'customer_changed_number',
+  CustomerIdentityChanged = 'customer_identity_changed',
+}
+
+export const enum ReferralSourceTypesEnum {
+  Ad = 'ad',
+  Post = 'post',
+}
+
+export const enum RequestCodeMethodsEnum {
+  Sms = 'SMS',
+  Voice = 'VOICE',
+}
+
+export const enum LanguagesEnum {
+  Afrikaans = 'af',
+  Albanian = 'sq',
+  Arabic = 'ar',
+  Azerbaijani = 'az',
+  Bengali = 'bn',
+  Bulgarian = 'bg',
+  Catalan = 'ca',
+  Chinese_CHN = 'zh_CN',
+  Chinese_HKG = 'zh_HK',
+  Chinese_TAI = 'zh_TW',
+  Croatian = 'hr',
+  Czech = 'cs',
+  Danish = 'da',
+  Dutch = 'nl',
+  English = 'en',
+  English_UK = 'en_GB',
+  English_US = 'en_US',
+  Estonian = 'et',
+  Filipino = 'fil',
+  Finnish = 'fi',
+  French = 'fr',
+  Georgian = 'ka',
+  German = 'de',
+  Greek = 'el',
+  Gujarati = 'gu',
+  Hausa = 'ha',
+  Hebrew = 'he',
+  Hindi = 'hi',
+  Hungarian = 'hu',
+  Indonesian = 'id',
+  Irish = 'ga',
+  Italian = 'it',
+  Japanese = 'ja',
+  Kannada = 'kn',
+  Kazakh = 'kk',
+  Kinyarwanda = 'rw_RW',
+  Korean = 'ko',
+  Kyrgyz_Kyrgyzstan = 'ky_KG',
+  Lao = 'lo',
+  Latvian = 'lv',
+  Lithuanian = 'lt',
+  Macedonian = 'mk',
+  Malay = 'ms',
+  Malayalam = 'ml',
+  Marathi = 'mr',
+  Norwegian = 'nb',
+  Persian = 'fa',
+  Polish = 'pl',
+  Portuguese_BR = 'pt_BR',
+  Portuguese_POR = 'pt_PT',
+  Punjabi = 'pa',
+  Romanian = 'ro',
+  Russian = 'ru',
+  Serbian = 'sr',
+  Slovak = 'sk',
+  Slovenian = 'sl',
+  Spanish = 'es',
+  Spanish_ARG = 'es_AR',
+  Spanish_SPA = 'es_ES',
+  Spanish_MEX = 'es_MX',
+  Swahili = 'sw',
+  Swedish = 'sv',
+  Tamil = 'ta',
+  Telugu = 'te',
+  Thai = 'th',
+  Turkish = 'tr',
+  Ukrainian = 'uk',
+  Urdu = 'ur',
+  Uzbek = 'uz',
+  Vietnamese = 'vi',
+  Zulu = 'zu',
 }
 
 export const enum CurrencyCodesEnum {
@@ -307,58 +525,4 @@ export const enum CurrencyCodesEnum {
   XFO = 'XFO',
   XRE = 'XRE',
   XFU = 'XFU',
-}
-
-export const enum StatusEnum {
-  Delivered = 'delivered',
-  Read = 'read',
-  Sent = 'sent',
-}
-
-export const enum VideoMediaTypesEnum {
-  Mp4 = 'video/mp4',
-  Threegp = 'video/3gp',
-}
-
-export const enum ReferralSourceTypesEnum {
-  Ad = 'ad',
-  Post = 'post',
-}
-export const enum StickerMediaTypesEnum {
-  Webp = 'image/webp',
-}
-
-export const enum WebhookTypesEnum {
-  Audio = 'audio',
-  Button = 'button',
-  Document = 'document',
-  Text = 'text',
-  Image = 'image',
-  Interactive = 'interactive',
-  Order = 'order',
-  Sticker = 'sticker',
-  System = 'system',
-  Unknown = 'unknown',
-  Video = 'video',
-}
-
-export const enum SystemChangeTypesEnum {
-  CustomerChangedNumber = 'customer_changed_number',
-  CustomerIdentityChanged = 'customer_identity_changed',
-}
-
-export const enum ImageMediaTypesEnum {
-  Jpeg = 'image/jpeg',
-  Png = 'image/png',
-}
-
-export const enum DocumentMediaTypesEnum {
-  Text = 'text/plain',
-  Pdf = 'application/pdf',
-  Ppt = 'application/vnd.ms-powerpoint',
-  Word = 'application/msword',
-  Excel = 'application/vnd.ms-excel',
-  OpenDoc = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  OpenPres = 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  OpenSheet = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 }
