@@ -8,11 +8,6 @@ import {
 } from '../types/enums';
 import { RequestData } from '../types/httpsClient';
 import * as m from '../types/messages';
-import { PinoLogger } from 'nestjs-pino';
-
-const LOGGER = new PinoLogger({
-  renameContext: 'WABA API(messages)',
-});
 
 export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
   private readonly commonMethod = HttpMethodsEnum.Post;
@@ -199,7 +194,6 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     recipient: number,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
-    LOGGER.info(body);
     return this.send(
       JSON.stringify(
         this.bodyBuilder(

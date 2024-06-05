@@ -1,11 +1,8 @@
 import { WAConfigType } from 'src/types/config';
 import { WAConfigEnum } from 'src/types/enums';
 import { configChecker } from './configChecker';
-import { PinoLogger } from 'nestjs-pino';
 
-const LOGGER = new PinoLogger({
-  renameContext: 'WABA API CLIENT',
-});
+
 const DEFAULT_BASE_URL = 'graph.facebook.com';
 const DEFAULT_LISTENER_PORT = 3000;
 const DEFAULT_MAX_RETRIES_AFTER_WAIT = 30;
@@ -36,7 +33,6 @@ export const importConfig = (senderNumberId?: number) => {
     [WAConfigEnum.Debug]: process.env.DEBUG === 'true',
   };
 
-  LOGGER.info(`Configuration loaded for App Id ${config[WAConfigEnum.AppId]}`);
 
   return config;
 };

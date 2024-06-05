@@ -9,11 +9,6 @@ import {
   ResponseJSONBody,
 } from 'src/types/httpsClient';
 import { HttpMethodsEnum } from 'src/types/enums';
-import { PinoLogger } from 'nestjs-pino';
-
-const LOGGER = new PinoLogger({
-  renameContext: 'HTTPS CLIENT',
-});
 
 export default class HttpsClient implements HttpsClientClass {
   agent: Agent;
@@ -48,15 +43,6 @@ export default class HttpsClient implements HttpsClientClass {
         headers: headers,
       });
 
-      LOGGER.info({
-        hostname: hostname,
-        port: port,
-        path,
-        method,
-        agent,
-        headers,
-      });
-
       req.setTimeout(timeout, () => {
         // TODO: Handle timeout error with error handler CB and custom error code
         req.destroy();
@@ -73,7 +59,6 @@ export default class HttpsClient implements HttpsClientClass {
       req.once('socket', (socket) => {
         if (socket.connecting) {
           socket.once('secureConnect', () => {
-            LOGGER.info(requestData);
             if (
               method === HttpMethodsEnum.Post ||
               method == HttpMethodsEnum.Put
