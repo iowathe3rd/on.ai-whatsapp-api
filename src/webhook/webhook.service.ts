@@ -117,26 +117,29 @@ export class WebhookService {
     message: MessagesObject,
     senderId: string,
   ): Promise<void> {
-    this.logger.debug(JSON.stringify(message));
-    const messageContent = message[message.type];
-    await prisma.message.create({
-      data: {
-        content: messageContent,
-        type: message.type as MessageType,
-        direction: Direction.inbound,
-        timeStamp: new Date(),
-        wa_id: message.id,
-        context: {
-          create: {
-            status: Status.read,
-          },
-        },
-        contact: {
-          connect: {
-            id: senderId,
-          },
-        },
-      },
+    const existingMessage = await prisma.message.findUnique({
+      where: { wa_id: message.id },
     });
+
+    this.logger.debug(JSON.stringify(message));
+    if (!existingMessage) {
+      const messageContent = message[message.type];
+
+      await prisma.message.create({
+        data: {
+          content: messageContent,
+          type: message.type as MessageType,
+          direction: Direction.inbound,
+          timeStamp: new Date(),
+          wa_id: message.id,
+          context: {
+            create: { status: Status.read },
+          },
+          contact: {
+            connect: { id: senderId },
+          },
+        },
+      });
+    }
   }
 }
