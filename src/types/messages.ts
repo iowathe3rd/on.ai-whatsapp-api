@@ -418,32 +418,32 @@ export type MessagesResponse = GeneralMessageBody & {
 export declare class MessagesClass extends BaseClass {
   audio(
     body: AudioMediaObject,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   contacts(
     body: [ContactObject],
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   document(
     body: DocumentMediaObject,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   image(
     body: ImageMediaObject,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   interactive(
     body: InteractiveObject,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   location(
     body: LocationObject,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   status(
@@ -451,22 +451,22 @@ export declare class MessagesClass extends BaseClass {
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   sticker(
     body: StickerMediaObject,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   template(
     body: MessageTemplateObject<ComponentTypesEnum>,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   text(
     body: TextObject,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
   video(
     body: VideoMediaObject,
-    recipient: number,
+    recipient: string,
     replyMessageId?: string,
   ): Promise<RequesterResponseInterface<MessagesResponse>>;
 }

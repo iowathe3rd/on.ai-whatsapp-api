@@ -6,10 +6,12 @@ import MessagesAPI from './messages';
 import PhoneNumbersAPI from './phoneNumbers';
 import TwoStepVerificationAPI from './twoStepVerification';
 import { importConfig } from 'src/utils/importConfig';
+import { Logger } from 'src/logger/logger.service';
 
 export default class WhatsApp implements WhatsAppClass {
   config: WAConfigType;
   requester: Readonly<Requester>;
+  logger?: Logger = new Logger('WABA API');
 
   readonly messages: MessagesAPI;
   readonly phoneNumbers: PhoneNumbersAPI;
@@ -25,11 +27,16 @@ export default class WhatsApp implements WhatsAppClass {
       this.config[SDKEnums.WAConfigEnum.AccessToken],
     );
 
-    this.messages = new MessagesAPI(this.config, this.requester);
-    this.phoneNumbers = new PhoneNumbersAPI(this.config, this.requester);
+    this.messages = new MessagesAPI(this.config, this.requester, this.logger);
+    this.phoneNumbers = new PhoneNumbersAPI(
+      this.config,
+      this.requester,
+      this.logger,
+    );
     this.twoStepVerification = new TwoStepVerificationAPI(
       this.config,
       this.requester,
+      this.logger,
     );
   }
 }

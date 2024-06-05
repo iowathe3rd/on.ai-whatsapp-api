@@ -4,12 +4,15 @@ import { MessagesObject, WebhookObject } from 'src/types';
 import { Contact, Direction, MessageType, Status } from '@prisma/client';
 import WhatsApp from 'src/classes/Whatsapp';
 import { Request } from 'express';
+import { Logger } from 'src/logger/logger.service';
 
 @Injectable()
 export class WebhookService {
   private readonly waba: WhatsApp;
+  private readonly logger: Logger;
   constructor() {
     this.waba = new WhatsApp(parseInt(process.env.WA_PHONE_NUMBER_ID));
+    this.logger = new Logger('WEBHOOK SERVICE');
   }
 
   async handleWebhook(dto: WebhookObject): Promise<void> {
@@ -30,13 +33,14 @@ export class WebhookService {
               value.contacts[0].profile.name,
             );
 
+            this.logger.debug(JSON.stringify(senderData));
             await this.createMessage(message, senderData.id);
 
-            await this.waba.messages.sticker(
+            await this.waba.messages.text(
               {
-                id: '798882015472548',
+                body: 'Hello!',
               },
-              parseInt(message.from),
+              senderData.phoneNumber,
             );
           }
         }
