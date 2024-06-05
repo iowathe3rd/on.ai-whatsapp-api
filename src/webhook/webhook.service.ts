@@ -5,6 +5,7 @@ import { Contact, Direction, MessageType, Status } from '@prisma/client';
 import WhatsApp from 'src/classes/Whatsapp';
 import { Request } from 'express';
 import { Logger, PinoLogger } from 'nestjs-pino';
+import { LanguagesEnum } from 'src/types/enums';
 
 const LOGGER = new PinoLogger({
   renameContext: 'WABA API CLIENT',
@@ -27,35 +28,33 @@ export class WebhookService {
       const { changes } = entryItem;
 
       for (const change of changes) {
-        const { field, value } = change;
-
-        // Проверяем, что поле изменения соответствует поле "messages"
-        if (field === 'messages') {
+        if (change.field === 'messages') {
+          const { value } = change;
           const { messages } = value;
-          LOGGER.info('Processing messages:', messages);
 
           for (const message of messages) {
             LOGGER.info('Processing message:', message);
+            LOGGER.debug('MESSAGE FROM', message.from);
 
-            // Получаем содержимое сообщения
-            // Находим отправителя в базе данных или создаем нового
             const senderData = await this.findOrCreateSender(
               message.from,
               value.contacts[0].profile.name,
             );
             LOGGER.info('Sender data:', senderData);
 
-            // Создаем новое сообщение в базе данных
             await this.createMessage(message, senderData.id);
             LOGGER.info('Message saved to database');
 
-            await this.waba.messages.text(
-              {
-                body: 'HI!',
-              },
-              parseInt(senderData.phoneNumber),
-            );
-            LOGGER.info('Sent response message to:', senderData.phoneNumber);
+            await this.waba.messages
+              .sticker(
+                {
+                  id: '798882015472548',
+                },
+                parseInt(message.from),
+              )
+              .then((res) => {
+                LOGGER.debug('MESSAGE SENT');
+              });
           }
         }
       }
@@ -93,14 +92,16 @@ export class WebhookService {
 
   // Функция для поиска или создания отправителя в базе данных
   private async findOrCreateSender(
+    //Recipient phone number
     phoneNumber: string,
+    //Recipient name
     name: string,
   ): Promise<Contact> {
     LOGGER.info('Finding or creating sender with phone number:', phoneNumber);
 
     let senderData = await prisma.contact.findFirst({
       where: {
-        phoneNumber,
+        phoneNumber: phoneNumber,
       },
     });
 
