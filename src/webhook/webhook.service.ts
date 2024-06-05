@@ -1,10 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import prisma from 'src/lib/db';
-import { MessagesObject, WebhookObject } from 'src/types';
+import { ErrorObject, MessagesObject, WebhookObject } from 'src/types';
 import { Contact, Direction, MessageType, Status } from '@prisma/client';
 import WhatsApp from 'src/classes/Whatsapp';
 import { Request } from 'express';
 import { Logger } from 'src/logger/logger.service';
+import { StatusesObject } from 'src/types/webhook';
 
 @Injectable()
 export class WebhookService {
@@ -24,30 +25,53 @@ export class WebhookService {
 
       for (const change of changes) {
         if (change.field === 'messages') {
-          const { value } = change;
-          const { messages } = value;
-
-          for (const message of messages) {
-            const senderData = await this.findOrCreateSender(
-              message.from,
-              value.contacts[0].profile.name,
-            );
-
-            this.logger.debug(JSON.stringify(senderData));
-            await this.createMessage(message, senderData.id);
-
-            await this.waba.messages.text(
-              {
-                body: 'Hello!',
-              },
-              senderData.phoneNumber,
-            );
+          const { messages, statuses, errors } = change.value;
+          if (Array.isArray(messages) && messages.length > 0) {
+            await this.proceedMessageEvent(messages);
+          }
+          if (Array.isArray(statuses) && statuses.length > 0) {
+            await this.proceedStatusesEvent(statuses);
+          }
+          if (Array.isArray(errors) && errors.length > 0) {
+            await this.proceedErrorsEvent(errors);
           }
         }
       }
     }
   }
 
+  async proceedMessageEvent(messages: MessagesObject[]) {
+    for (const message of messages) {
+      const senderData = await this.findOrCreateSender(message.from);
+      this.logger.debug(JSON.stringify(senderData));
+      await this.createMessage(message, senderData.id);
+    }
+  }
+
+  async proceedErrorsEvent(errors: ErrorObject[]) {
+    for (const error of errors) {
+      this.logger.fatal(JSON.stringify(error));
+    }
+  }
+
+  async proceedStatusesEvent(statuses: StatusesObject[]) {
+    this.logger.debug(JSON.stringify(statuses));
+    for (const status of statuses) {
+      const { id, status: messageStatus } = status;
+      await prisma.message.update({
+        where: {
+          wa_id: id,
+        },
+        data: {
+          context: {
+            update: {
+              status: messageStatus as Status,
+            },
+          },
+        },
+      });
+    }
+  }
   verifyWebhook(req: Request): string {
     const mode = req.query['hub.mode'] as string;
     const token = req.query['hub.verify_token'] as string;
@@ -65,16 +89,11 @@ export class WebhookService {
     }
   }
 
-  getMessageContent(message: MessagesObject) {
-    return message[message.type];
-  }
-
   // Функция для поиска или создания отправителя в базе данных
   private async findOrCreateSender(
     //Recipient phone number
     phoneNumber: string,
     //Recipient name
-    name: string,
   ): Promise<Contact> {
     let senderData = await prisma.contact.findFirst({
       where: {
@@ -86,7 +105,6 @@ export class WebhookService {
       senderData = await prisma.contact.create({
         data: {
           phoneNumber,
-          name,
         },
       });
     }
@@ -99,7 +117,8 @@ export class WebhookService {
     message: MessagesObject,
     senderId: string,
   ): Promise<void> {
-    const messageContent = this.getMessageContent(message);
+    this.logger.debug(JSON.stringify(message));
+    const messageContent = message[message.type];
     await prisma.message.create({
       data: {
         content: messageContent,
@@ -109,7 +128,7 @@ export class WebhookService {
         wa_id: message.id,
         context: {
           create: {
-            status: Status.sent,
+            status: Status.read,
           },
         },
         contact: {

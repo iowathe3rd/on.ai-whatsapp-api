@@ -8,6 +8,8 @@ import {
 } from '../types/enums';
 import { RequestData } from '../types/httpsClient';
 import * as m from '../types/messages';
+import axios from 'axios';
+import { Logger } from 'src/logger/logger.service';
 
 export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
   private readonly commonMethod = HttpMethodsEnum.Post;
@@ -28,7 +30,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
       | m.VideoMediaObject,
     toNumber: string,
     replyMessageId?: string,
-  ) {
+  ): m.MessageRequestBody<T> {
     const body: m.MessageRequestBody<T> = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
@@ -52,6 +54,43 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
       this.commonEndpoint,
       this.config[WAConfigEnum.RequestTimeout],
       body,
+    );
+  }
+
+  async text(
+    body: m.TextObject,
+    recipient: string,
+    replyMessageId?: string,
+  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+    this.logger.debug(`Preparing to send text message to: ${recipient}`);
+    const requestBody = this.bodyBuilder(
+      MessageTypesEnum.Text,
+      body,
+      recipient,
+      replyMessageId,
+    );
+
+    const sent = await axios.post(
+      `https://graph.facebook.com/v20.0/335929729601931/messages`,
+      requestBody,
+      {
+        headers: {
+          Authorization: `Bearer EAAbWpxpqRFwBOy2Ou5XECMxvKg9iD3X2rI5i8Q7GeVLekjJym1pOUC3JXL1HR0C08TMWpocbZA96nSbI0fDg0sv2RIVfMAg748Ute0MtMA6ZCGHZAVZCM97u2ZA6Da7O6fJMtTFjpSZC31QOZA5ZBOOG18ulaD63I18mxPV23GiqpQtuuC08SshZBE6KGI6JldjZCw5PuMlggI3DNDKQ9ZCFont4zOqZCEd1`,
+        },
+      },
+    );
+
+    new Logger().log(sent.data);
+
+    return this.send(
+      JSON.stringify(
+        this.bodyBuilder(
+          MessageTypesEnum.Text,
+          body,
+          recipient.toString(),
+          replyMessageId,
+        ),
+      ),
     );
   }
 
@@ -191,24 +230,6 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
       JSON.stringify(
         this.bodyBuilder(
           MessageTypesEnum.Template,
-          body,
-          recipient.toString(),
-          replyMessageId,
-        ),
-      ),
-    );
-  }
-
-  async text(
-    body: m.TextObject,
-    recipient: string,
-    replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
-    this.logger.debug(`Preparing to send text message to: ${recipient}`);
-    return this.send(
-      JSON.stringify(
-        this.bodyBuilder(
-          MessageTypesEnum.Text,
           body,
           recipient.toString(),
           replyMessageId,
