@@ -269,13 +269,13 @@ export type StickerMessageRequestBody =
     [MessageTypesEnum.Sticker]: [StickerMediaObject];
   };
 
-type ReActionObject = {
+export type ReactionObject = {
   message_id: string;
   emoji: string;
 };
 
 export type ReactionMessageRequestBody =
-  MessageRequestBody<MessageTypesEnum.Reaction> & ReActionObject;
+  MessageRequestBody<MessageTypesEnum.Reaction> & ReactionObject;
 
 export type TextObject = {
   body: string;
@@ -286,6 +286,8 @@ export type TextMessageRequestBody =
   MessageRequestBody<MessageTypesEnum.Text> & {
     [MessageTypesEnum.Text]: [TextObject];
   };
+
+export type ContentObject = TextObject | ReactionObject | AudioMediaObject | ContactObject | DocumentMediaObject | ImageMediaObject | InteractiveObject | LocationObject | StickerMediaObject | VideoMediaObject | MessageTemplateObject<any>;
 
 type MetaHostedVideoMediaObject = {
   id: string;

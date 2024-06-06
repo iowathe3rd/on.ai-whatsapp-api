@@ -14,7 +14,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
   private readonly commonMethod = HttpMethodsEnum.Post;
   private readonly commonEndpoint = 'messages';
 
-  bodyBuilder<T extends MessageTypesEnum, C extends ComponentTypesEnum>(
+  public bodyBuilder<T extends MessageTypesEnum, C extends ComponentTypesEnum>(
     type: T,
     payload:
       | m.AudioMediaObject

@@ -58,7 +58,7 @@ export type ButtonObject = {
   text: string;
 };
 
-export type ConTextObject = {
+export type ContextObject = {
   forwarded: boolean;
   frequently_forwarded: boolean;
   from: string;
@@ -164,7 +164,7 @@ export type VideoObject = {
 export type MessagesObject = {
   audio?: AudioObject;
   button?: ButtonObject;
-  context?: ConTextObject;
+  context?: ContextObject;
   document?: DocumentObject;
   errors: ErrorObject[];
   from: string;
