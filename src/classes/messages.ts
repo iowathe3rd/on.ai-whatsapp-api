@@ -8,8 +8,7 @@ import {
 } from '../types/enums';
 import { RequestData } from '../types/httpsClient';
 import * as m from '../types/messages';
-import axios from 'axios';
-import { Logger } from 'src/logger/logger.service';
+import {MessagesResponse} from "../types/messages";
 
 export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
   private readonly commonMethod = HttpMethodsEnum.Post;
@@ -47,9 +46,9 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
 
   send(
     body: RequestData,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Sending message with body: ${body}`);
-    return this.client.sendCAPIRequest(
+    return this.client.sendCAPIRequest<MessagesResponse>(
       this.commonMethod,
       this.commonEndpoint,
       this.config[WAConfigEnum.RequestTimeout],
@@ -61,35 +60,13 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.TextObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send text message to: ${recipient}`);
-    const requestBody = this.bodyBuilder(
-      MessageTypesEnum.Text,
-      body,
-      recipient,
-      replyMessageId,
-    );
-
-    const sent = await axios.post(
-      `https://graph.facebook.com/v20.0/335929729601931/messages`,
-      requestBody,
-      {
-        headers: {
-          Authorization: `Bearer EAAbWpxpqRFwBOy2Ou5XECMxvKg9iD3X2rI5i8Q7GeVLekjJym1pOUC3JXL1HR0C08TMWpocbZA96nSbI0fDg0sv2RIVfMAg748Ute0MtMA6ZCGHZAVZCM97u2ZA6Da7O6fJMtTFjpSZC31QOZA5ZBOOG18ulaD63I18mxPV23GiqpQtuuC08SshZBE6KGI6JldjZCw5PuMlggI3DNDKQ9ZCFont4zOqZCEd1`,
-        },
-      },
-    );
-
-    new Logger().log(sent.data);
-
+    const requestbody = this.bodyBuilder(MessageTypesEnum.Text, body, recipient.toString(), replyMessageId);
+    this.logger.debug(JSON.stringify(requestbody))
     return this.send(
       JSON.stringify(
-        this.bodyBuilder(
-          MessageTypesEnum.Text,
-          body,
-          recipient.toString(),
-          replyMessageId,
-        ),
+          requestbody
       ),
     );
   }
@@ -98,7 +75,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.AudioMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send audio message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -116,7 +93,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: [m.ContactObject],
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send contacts message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -134,7 +111,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.DocumentMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send document message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -152,7 +129,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.ImageMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send image message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -170,7 +147,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.InteractiveObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send interactive message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -188,7 +165,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.LocationObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send location message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -206,7 +183,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.StickerMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send sticker message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -224,7 +201,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.MessageTemplateObject<ComponentTypesEnum>,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send template message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -242,7 +219,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: m.VideoMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send video message to: ${recipient}`);
     return this.send(
       JSON.stringify(
@@ -258,7 +235,7 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
 
   async status(
     body: m.StatusObject,
-  ): Promise<RequesterResponseInterface<m.MessagesResponse>> {
+  ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send status message`);
     const mp: m.GeneralMessageBody = { messaging_product: 'whatsapp' };
     const bodyToSend: m.StatusRequestBody = Object.assign(mp, body);

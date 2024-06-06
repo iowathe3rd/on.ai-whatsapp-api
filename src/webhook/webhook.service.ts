@@ -28,6 +28,9 @@ export class WebhookService {
           const { messages, statuses, errors } = change.value;
           if (Array.isArray(messages) && messages.length > 0) {
             await this.proceedMessageEvent(messages);
+            await this.waba.messages.text({
+              body: "Hello world",
+            }, messages[0].from)
           }
           if (Array.isArray(statuses) && statuses.length > 0) {
             await this.proceedStatusesEvent(statuses);

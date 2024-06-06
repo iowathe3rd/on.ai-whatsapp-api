@@ -420,53 +420,53 @@ export declare class MessagesClass extends BaseClass {
     body: AudioMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   contacts(
     body: [ContactObject],
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   document(
     body: DocumentMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   image(
     body: ImageMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   interactive(
     body: InteractiveObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   location(
     body: LocationObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   status(
     body: StatusObject,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   sticker(
     body: StickerMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   template(
     body: MessageTemplateObject<ComponentTypesEnum>,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   text(
     body: TextObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
   video(
     body: VideoMediaObject,
     recipient: string,
     replyMessageId?: string,
-  ): Promise<RequesterResponseInterface<MessagesResponse>>;
+  ): Promise<MessagesResponse>;
 }

@@ -33,10 +33,10 @@ export declare class RequesterClass {
     phoneNumberId: number,
     accessToken: string,
   );
-  sendCAPIRequest: (
+  sendCAPIRequest: <T>(
     method: HttpMethodsEnum,
     path: string,
     timeout: number,
     body?: any,
-  ) => Promise<RequesterResponseInterface<any>>;
+  ) => Promise<T>;
 }
