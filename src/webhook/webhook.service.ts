@@ -1,11 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
 import prisma from 'src/lib/db';
 import { ErrorObject, MessagesObject, WebhookObject } from 'src/types';
 import { Contact, Direction, MessageType, Status } from '@prisma/client';
 import WhatsApp from 'src/classes/Whatsapp';
 import { Request } from 'express';
 import { Logger } from 'src/logger/logger.service';
-import { StatusesObject } from 'src/types/webhook';
+import {StatusesObject, ValueObject} from 'src/types/webhook';
+import {ContactObject} from "../types/messages";
+import {RuntimeException} from "@nestjs/core/errors/exceptions";
 
 @Injectable()
 export class WebhookService {
@@ -25,12 +27,12 @@ export class WebhookService {
 
       for (const change of changes) {
         if (change.field === 'messages') {
-          const { messages, statuses, errors } = change.value;
+          const { messages, statuses, errors, contacts } = change.value;
           if (Array.isArray(messages) && messages.length > 0) {
             await this.proceedMessageEvent(messages);
-            await this.waba.messages.text({
-              body: "Hello world",
-            }, messages[0].from)
+            /*await this.waba.messages.text({
+               body: "Hello world",
+            }, `78${messages[0].from.slice(1)}`)*/
           }
           if (Array.isArray(statuses) && statuses.length > 0) {
             await this.proceedStatusesEvent(statuses);
@@ -61,6 +63,31 @@ export class WebhookService {
     this.logger.debug(JSON.stringify(statuses));
     for (const status of statuses) {
       const { id, status: messageStatus } = status;
+
+      try {
+        const existingMessage = await prisma.message.findUnique({
+          where: { wa_id: id },
+          include: { context: true }, // Включаем связанные данные context
+        });
+        if (!existingMessage) {
+          this.logger.error(`No message found with wa_id: ${id}`);
+          throw new NotFoundException(`Message with wa_id ${id} not found`)
+        }
+        await prisma.message.update({
+          where: { wa_id: id },
+          data: {
+            context: {
+              upsert: {
+                create: { status: Status[messageStatus]},
+                update: { status: Status[messageStatus]},
+              },
+            },
+          },
+        });
+      }catch (e) {
+        this.logger.fatal(String(e))
+        throw new RuntimeException(e)
+      }
       await prisma.message.update({
         where: {
           wa_id: id,
