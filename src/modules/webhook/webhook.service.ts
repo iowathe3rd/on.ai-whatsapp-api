@@ -4,9 +4,9 @@ import { ErrorObject, MessagesObject, WebhookObject } from 'src/types';
 import { Contact, Direction, MessageType, Status } from '@prisma/client';
 import WhatsApp from 'src/classes/Whatsapp';
 import { Request } from 'express';
-import { Logger } from 'src/logger/logger.service';
+import { Logger } from 'src/services/logger.service';
 import {StatusesObject, ValueObject} from 'src/types/webhook';
-import {ContactObject} from "../types/messages";
+import {ContactObject} from "../../types/messages";
 import {RuntimeException} from "@nestjs/core/errors/exceptions";
 
 @Injectable()

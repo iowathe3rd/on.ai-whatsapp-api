@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 import {HttpMethodsEnum} from 'src/types/enums';
 import {RequesterClass} from 'src/types/requester';
-import {Logger} from 'src/logger/logger.service';
+import {Logger} from 'src/services/logger.service';
 import {normalizeUrl} from "./index";
 
 export default class Requester implements RequesterClass {

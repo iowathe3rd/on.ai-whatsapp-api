@@ -6,7 +6,7 @@ import MessagesAPI from './messages';
 import PhoneNumbersAPI from './phoneNumbers';
 import TwoStepVerificationAPI from './twoStepVerification';
 import { importConfig } from 'src/utils/importConfig';
-import { Logger } from 'src/logger/logger.service';
+import { Logger } from 'src/services/logger.service';
 
 export default class WhatsApp implements WhatsAppClass {
   config: WAConfigType;

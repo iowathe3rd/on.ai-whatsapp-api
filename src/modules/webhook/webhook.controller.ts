@@ -10,7 +10,7 @@ import {
 import { WebhookService } from './webhook.service';
 import { Request } from 'express';
 import { WebhookObject } from 'src/types';
-import { Logger } from 'src/logger/logger.service';
+import { Logger } from 'src/services/logger.service';
 
 @Controller('webhook')
 export class WebhookController {

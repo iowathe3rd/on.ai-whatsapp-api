@@ -1,6 +1,5 @@
 import { WAConfigType } from 'src/types/config';
-import { WAConfigEnum } from 'src/types/enums';
-import { configChecker } from './configChecker';
+import {WAConfigEnum, WARequiredConfigEnum} from 'src/types/enums';
 
 
 const DEFAULT_BASE_URL = 'graph.facebook.com';
@@ -9,7 +8,23 @@ const DEFAULT_MAX_RETRIES_AFTER_WAIT = 30;
 const DEFAULT_REQUEST_TIMEOUT = 20000;
 
 export const importConfig = (senderNumberId?: number) => {
-  configChecker(senderNumberId);
+  if (
+      (process.env.WA_PHONE_NUMBER_ID === undefined ||
+          process.env.WA_PHONE_NUMBER_ID === '') &&
+      senderNumberId == undefined
+  ) {
+
+    throw new Error('Missing WhatsApp sender phone number Id.');
+  }
+
+  for (const value of Object.values(WARequiredConfigEnum)) {
+    if (
+        process.env[`${value}`] === undefined ||
+        process.env[`${value}`] === ''
+    ) {
+      throw new Error('Invalid configuration.');
+    }
+  }
 
   const config: WAConfigType = {
     [WAConfigEnum.BaseURL]: process.env.WA_BASE_URL || DEFAULT_BASE_URL,
