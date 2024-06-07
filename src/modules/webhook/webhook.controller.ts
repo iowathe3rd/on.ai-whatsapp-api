@@ -16,7 +16,7 @@ import { Logger } from 'src/services/logger.service';
 export class WebhookController {
   private readonly logger: Logger;
   constructor(private readonly webhookService: WebhookService) {
-    this.logger = new Logger('WEBHOOK CONTROLLER');
+    this.logger = new Logger(WebhookController.name);
   }
   @Post()
   @HttpCode(HttpStatus.OK)

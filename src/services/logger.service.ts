@@ -2,8 +2,11 @@ import { ConsoleLogger, Injectable, Scope } from '@nestjs/common';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class Logger extends ConsoleLogger {
-  constructor(context?: string, options?: { timestamp?: boolean }) {
-    super(context, options);
+  constructor(context?: string) {
+    super(context, {
+      logLevels: ["log", "debug", "error", "fatal", "verbose", "warn"],
+      timestamp: false
+    });
   }
 
   log(message: string, context?: string) {

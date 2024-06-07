@@ -15,7 +15,7 @@ export class WebhookService {
   private readonly logger: Logger;
   constructor() {
     this.waba = new WhatsApp(parseInt(process.env.WA_PHONE_NUMBER_ID));
-    this.logger = new Logger('WEBHOOK SERVICE');
+    this.logger = new Logger(WebhookService.name);
   }
 
   async handleWebhook(dto: WebhookObject): Promise<void> {

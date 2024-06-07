@@ -2,6 +2,7 @@ import { RequesterResponseInterface } from '../types/requester';
 import BaseAPI from './base';
 import { HttpMethodsEnum, WAConfigEnum } from '../types/enums';
 import * as pn from '../types/phoneNumbers';
+import {Logger} from "../services/logger.service";
 
 export default class PhoneNumbersAPI
   extends BaseAPI
@@ -9,6 +10,7 @@ export default class PhoneNumbersAPI
 {
   private readonly commonMethod = HttpMethodsEnum.Post;
 
+  private readonly logger = new Logger(PhoneNumbersAPI.name)
   requestCode(
     body: pn.RequestCodeObject,
   ): Promise<RequesterResponseInterface<pn.PhoneNumbersResponseObject>> {

@@ -26,7 +26,7 @@ export type StatusObject = {
 
 export type StatusRequestBody = GeneralMessageBody & StatusObject;
 
-type ConTextObject = {
+export type ConTextObject = {
   message_id: string;
 };
 

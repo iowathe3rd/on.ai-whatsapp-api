@@ -1,18 +1,14 @@
-import { RequesterResponseInterface } from '../types/requester';
 import BaseAPI from './base';
-import {
-  ComponentTypesEnum,
-  HttpMethodsEnum,
-  MessageTypesEnum,
-  WAConfigEnum,
-} from '../types/enums';
-import { RequestData } from '../types/httpsClient';
+import {ComponentTypesEnum, HttpMethodsEnum, MessageTypesEnum, WAConfigEnum,} from '../types/enums';
+import {RequestData} from '../types/httpsClient';
 import * as m from '../types/messages';
-import {MessagesResponse} from "../types/messages";
+import {MessagesResponse} from '../types/messages';
+import {Logger} from "../services/logger.service";
 
 export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
   private readonly commonMethod = HttpMethodsEnum.Post;
   private readonly commonEndpoint = 'messages';
+  private readonly logger = new Logger(MessagesAPI.name)
 
   public bodyBuilder<T extends MessageTypesEnum, C extends ComponentTypesEnum>(
     type: T,
@@ -33,11 +29,11 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     const body: m.MessageRequestBody<T> = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
-      to: toNumber,
+      to: `78${toNumber.slice(1)}`,
       type: type,
       [type]: payload,
     };
-
+    console.log(body)
     if (replyMessageId) body['context'] = { message_id: replyMessageId };
 
     this.logger.debug(`Building body for message type: ${type}`);
@@ -48,12 +44,17 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     body: RequestData,
   ): Promise<m.MessagesResponse> {
     this.logger.debug(`Sending message with body: ${body}`);
-    return this.client.sendCAPIRequest<MessagesResponse>(
-      this.commonMethod,
-      this.commonEndpoint,
-      this.config[WAConfigEnum.RequestTimeout],
-      body,
-    );
+    try {
+      return this.client.sendCAPIRequest<MessagesResponse>(
+          this.commonMethod,
+          this.commonEndpoint,
+          this.config[WAConfigEnum.RequestTimeout],
+          body,
+      );
+    }catch (e) {
+      this.logger.fatal(e);
+      throw Error("Something went wrong while sending capi request, check logs");
+    }
   }
 
   async text(
@@ -62,11 +63,14 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
     replyMessageId?: string,
   ): Promise<m.MessagesResponse> {
     this.logger.debug(`Preparing to send text message to: ${recipient}`);
-    const requestbody = this.bodyBuilder(MessageTypesEnum.Text, body, recipient.toString(), replyMessageId);
-    this.logger.debug(JSON.stringify(requestbody))
     return this.send(
       JSON.stringify(
-          requestbody
+          this.bodyBuilder(
+              MessageTypesEnum.Text,
+              body,
+              recipient.toString(),
+              replyMessageId
+          )
       ),
     );
   }

@@ -11,7 +11,7 @@ import { Logger } from 'src/services/logger.service';
 export default class WhatsApp implements WhatsAppClass {
   config: WAConfigType;
   requester: Readonly<Requester>;
-  logger?: Logger = new Logger('WABA API');
+  logger: Logger = new Logger(WhatsApp.name);
 
   readonly messages: MessagesAPI;
   readonly phoneNumbers: PhoneNumbersAPI;
@@ -27,16 +27,14 @@ export default class WhatsApp implements WhatsAppClass {
       this.config[SDKEnums.WAConfigEnum.AccessToken],
     );
 
-    this.messages = new MessagesAPI(this.config, this.requester, this.logger);
+    this.messages = new MessagesAPI(this.config, this.requester);
     this.phoneNumbers = new PhoneNumbersAPI(
       this.config,
       this.requester,
-      this.logger,
     );
     this.twoStepVerification = new TwoStepVerificationAPI(
       this.config,
       this.requester,
-      this.logger,
     );
   }
 }

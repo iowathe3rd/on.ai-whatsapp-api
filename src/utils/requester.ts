@@ -9,7 +9,7 @@ export default class Requester implements RequesterClass {
   phoneNumberId: Readonly<number>;
   apiVersion: Readonly<string> = "v19.0";
   host: Readonly<string> = "https://graph.facebook.com";
-  private readonly logger: Logger = new Logger("REQUESTER"); // Добавляем экземпляр Logger
+  private readonly logger: Logger = new Logger(Requester.name); // Добавляем экземпляр Logger
 
   private readonly axiosInstance: AxiosInstance;
 
@@ -19,7 +19,7 @@ export default class Requester implements RequesterClass {
       phoneNumberId: number,
       accessToken: string,
   ) {
-    this.host = normalizeUrl("https://graph.facebook.com/");
+    this.host = normalizeUrl(host);
     this.logger.debug(`Initialized with host: ${this.host}`);
 
     this.apiVersion = apiVersion;
@@ -45,7 +45,7 @@ export default class Requester implements RequesterClass {
           return value;
         },
         function (error) {
-          // Do something with request error
+          console.log(error)
           return Promise.reject(error)
         }
     )
@@ -68,8 +68,8 @@ export default class Requester implements RequesterClass {
     try {
       this.logger.debug(`Sending ${method} request to ${url} with config: ${JSON.stringify(config)}`);
       const response = await this.axiosInstance.request<T>(config);
-      this.logger.debug(`Received response from ${url}: ${JSON.stringify(response?.data)}`);
-      return response.data;
+      this.logger.debug(`Received response from ${url}: ${JSON.stringify(response)}`);
+      return response.data as T;
     } catch (error) {
       this.logger.error(`Error sending request to ${url}: ${error}`);
       throw new Error(`Failed to send ${method} request to ${url}: ${error.message}`);
