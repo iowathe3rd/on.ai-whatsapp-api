@@ -17,6 +17,20 @@ export type PhoneNumbersResponseObject = {
   success: boolean;
 };
 
+export type PhoneNumber = {
+  verified_name: string,
+  display_phone_number: string,
+  id: string,
+  quality_rating: "GREEN" | "YELLOW" | "READ" | "NA",
+  platform_type?: "CLOUD_API",
+  throughput?: {
+    level: "STANDARD"
+  },
+  webhook_configuration?: {
+    application: string
+  },
+}
+
 export declare class phoneNumbersClass extends BaseClass {
   requestCode(
     body: RequestCodeObject,

@@ -45,10 +45,9 @@ export default class MessagesAPI extends BaseAPI implements m.MessagesClass {
   ): Promise<m.MessagesResponse> {
     this.logger.debug(`Sending message with body: ${body}`);
     try {
-      return this.client.sendCAPIRequest<MessagesResponse>(
+      return this.client.sendRequest<MessagesResponse>(
           this.commonMethod,
-          this.commonEndpoint,
-          this.config[WAConfigEnum.RequestTimeout],
+          `${this.config[WAConfigEnum.PhoneNumberId]}/${this.commonEndpoint}`,
           body,
       );
     }catch (e) {

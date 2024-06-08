@@ -539,3 +539,13 @@ export const enum CurrencyCodesEnum {
     XRE = 'XRE',
     XFU = 'XFU',
 }
+
+export const enum WabaEnpoints {
+    PHONE_REGISTRATION = "register",
+    PHONE_DEREGISTER = "deregister",
+    MEDIA = "media",
+    MESSAGES = "messages",
+    PHONE_NUMBERS = "phone_numbers",
+    REQUEST_CODE = "request_code",
+    VERIFY_CODE = "verify_code"
+}

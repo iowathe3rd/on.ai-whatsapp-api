@@ -34,9 +34,8 @@ export default class Requester implements RequesterClass {
     this.axiosInstance = axios.create({
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
       },
-      baseURL: this.host
     });
 
     this.axiosInstance.interceptors.request.use(
@@ -51,24 +50,23 @@ export default class Requester implements RequesterClass {
     )
     this.logger.debug('Requester instance created');
   }
-  async sendCAPIRequest<T>(
+  async sendRequest<T>(
       method: HttpMethodsEnum,
       endpoint: string,
-      timeout: number,
       body?: any,
   ): Promise<T | null > {
-    const url = `/${this.apiVersion}/${this.phoneNumberId}/${endpoint}`;
+    const url = `/${this.apiVersion}/${endpoint}`;
+
     const config: AxiosRequestConfig = {
       method: method,
-      url: url,
+      url: new URL(url, this.host).toString(),
       data: body,
-      timeout: timeout
     };
 
     try {
-      this.logger.debug(`Sending ${method} request to ${url} with config: ${JSON.stringify(config)}`);
+      // this.logger.debug(`Sending ${method} request to ${url} with config: ${JSON.stringify(config)}`);
       const response = await this.axiosInstance.request<T>(config);
-      this.logger.debug(`Received response from ${url}: ${JSON.stringify(response)}`);
+      // this.logger.debug(`Received response from ${url}: ${String(JSON.stringify(response))}`);
       return response.data as T;
     } catch (error) {
       this.logger.error(`Error sending request to ${url}: ${error}`);

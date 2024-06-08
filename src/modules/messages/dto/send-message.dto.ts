@@ -1,10 +1,28 @@
 
-import {IsString, IsNotEmpty, IsOptional, IsJSON, IsEnum, ValidateNested} from 'class-validator';
+import {
+    IsString,
+    IsNotEmpty,
+    IsOptional,
+    IsJSON,
+    IsEnum,
+    ValidateNested,
+    IsBoolean,
+    ValidateIf,
+    IsObject
+} from 'class-validator';
 import {MessageTypesEnum} from "../../../types/enums";
-import {ContentObject, ConTextObject, ReactionObject} from "../../../types/messages";
-import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
+import {
+    AudioMediaObject,
+    ContactObject,
+    ContentObject,
+    ConTextObject, DocumentMediaObject, ImageMediaObject, InteractiveObject, LocationObject, MessageTemplateObject,
+    ReactionObject, StickerMediaObject,
+    TextObject, VideoMediaObject
+} from "../../../types/messages";
+import {ApiProperty, ApiPropertyOptional, getSchemaPath} from "@nestjs/swagger";
+import {Type} from "class-transformer";
 import {MessageType} from "@prisma/client";
-import {Type } from 'class-transformer';
+
 
 export class SendMessageDto {
     @ApiProperty({
@@ -28,7 +46,7 @@ export class SendMessageDto {
 
     @ApiProperty({
         description: 'Content of the message, in JSON format',
-        example: { text: 'Hello, world!' },
+        example: { body: 'Hello, world!' },
     })
     @IsNotEmpty()
     @ValidateNested()

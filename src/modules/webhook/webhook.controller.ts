@@ -11,8 +11,10 @@ import { WebhookService } from './webhook.service';
 import { Request } from 'express';
 import { WebhookObject } from 'src/types';
 import { Logger } from 'src/services/logger.service';
+import {ApiTags} from "@nestjs/swagger";
 
 @Controller('webhook')
+@ApiTags("Webhook")
 export class WebhookController {
   private readonly logger: Logger;
   constructor(private readonly webhookService: WebhookService) {

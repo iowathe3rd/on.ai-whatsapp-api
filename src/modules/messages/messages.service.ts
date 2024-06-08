@@ -12,22 +12,26 @@ export class MessagesService {
   private readonly waba: WhatsApp = new WhatsApp();
   private readonly logger: Logger = new Logger(MessagesService.name);
   async send(dto: SendMessageDto): Promise<Message> {
-    const {type, to, content, context, reaction} = dto;
+    const {type, to, content, } = dto;
     const body: m.MessageRequestBody<MessageTypesEnum> = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
-      to: `78${dto.to.slice(1)}`,
-      type: type,
-      [type]: content,
+      // to: `78${dto.to.slice(1)}`,
+      to: `787057109455`,
+      type: MessageTypesEnum.Text,
+      [MessageTypesEnum.Text]: {
+        body: "Hello world"
+      },
     };
 
-    if (context) body['context'] = { message_id: context.message_id };
-    this.logger.debug(`Building body for message type: ${type}, to: ${to}, content: ${JSON.stringify(content)}, context: ${JSON.stringify(context)}`);
+    // if (context) body['context'] = { message_id: context.message_id };
+    // this.logger.debug(`Building body for message type: ${type}, to: ${to}, content: ${JSON.stringify(content)}`);
+    this.logger.debug(JSON.stringify(body))
 
     try {
-      this.logger.log(`Sending message to WhatsApp API: ${JSON.stringify(body)}`);
+      // this.logger.log(`Sending message to WhatsApp API: ${JSON.stringify(body)}`);
       const sent = await this.waba.messages.send(body);
-      this.logger.debug(`Message sent via WhatsApp API: ${JSON.stringify(sent)}`);
+      // this.logger.debug(`Message sent via WhatsApp API: ${JSON.stringify(sent)}`);
 
       try {
         this.logger.log(`Saving message to database: ${JSON.stringify(sent.messages[0])}`);
